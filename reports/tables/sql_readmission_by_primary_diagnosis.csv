@@ -1,0 +1,11 @@
+primary_diagnosis,encounters,readmissions_30d,readmission_rate
+Missing,20,5.0,0.25
+Diabetes,8661,1135.0,0.131
+Injury,6851,850.0,0.1241
+Circulatory,29679,3469.0,0.1169
+Other,17792,2078.0,0.1168
+Genitourinary,5002,552.0,0.1104
+Neoplasms,3131,341.0,0.1089
+Digestive,9333,1010.0,0.1082
+Respiratory,13933,1401.0,0.1006
+Musculoskeletal,4935,471.0,0.0954
