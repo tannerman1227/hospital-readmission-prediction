@@ -1,0 +1,13 @@
+medical_specialty,encounters,readmissions_30d,readmission_rate
+Missing,48614,5753.0,0.1183
+InternalMedicine,14235,1641.0,0.1153
+Emergency/Trauma,7419,845.0,0.1139
+Family/GeneralPractice,7252,879.0,0.1212
+Cardiology,5278,424.0,0.0803
+Surgery-General,3059,342.0,0.1118
+Nephrology,1539,248.0,0.1611
+Orthopedics,1392,151.0,0.1085
+Orthopedics-Reconstructive,1230,92.0,0.0748
+Radiologist,1121,102.0,0.091
+Pulmonology,854,96.0,0.1124
+Psychiatry,852,103.0,0.1209

@@ -1,0 +1,7 @@
+discharge_group,encounters,readmissions_30d,readmission_rate
+Home,60232,5602.0,0.093
+Nursing facility,15229,2187.0,0.1436
+Home health,13010,1653.0,0.1271
+Transfer,5563,1229.0,0.2209
+Unknown,4680,551.0,0.1177
+Left against advice,623,90.0,0.1445

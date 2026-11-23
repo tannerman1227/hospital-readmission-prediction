@@ -1,0 +1,1420 @@
+{
+  "dataset": {
+    "name": "Diabetes 130-US Hospitals for Years 1999-2008",
+    "url": "https://archive.ics.uci.edu/ml/machine-learning-databases/00296/dataset_diabetes.zip",
+    "zip_sha256": "66d9820c3bd5fd2abf7957bda2d9714b2de1e7bba1ac1f1ff8fa85e83c22cb33",
+    "citation": "Beata Strack, Jonathan P. DeShazo, Chris Gennings, Juan L. Olmo, Sebastian Ventura, Krzysztof J. Cios, and John N. Clore, \"Impact of HbA1c Measurement on Hospital Readmission Rates: Analysis of 70,000 Clinical Database Patient Records,\" BioMed Research International, 2014. UCI Machine Learning Repository, DOI 10.24432/C5230J, CC BY 4.0. https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008",
+    "prediction_point": "At discharge, for a completed inpatient encounter.",
+    "target": "readmitted == '<30' versus '>30' or 'NO'."
+  },
+  "cohort": {
+    "raw_encounters": 101766,
+    "raw_patients": 71518,
+    "missing_rate_weight": 0.9685847925633315,
+    "missing_rate_payer_code": 0.395574160328597,
+    "missing_rate_medical_specialty": 0.49082208203132677,
+    "missing_rate_race": 0.022335554114340742,
+    "missing_rate_a1c": 0.8327732248491637,
+    "missing_rate_glucose": 0.9474677200636755,
+    "removed_expired_hospice_or_still_patient": 2426,
+    "removed_excluded_but_coded_readmit_30d": 45,
+    "removed_unknown_gender": 3,
+    "encounters": 99337,
+    "patients": 69985,
+    "readmissions_30d": 11312,
+    "readmission_rate": 0.11387499119160031,
+    "dropped_columns": [
+      "weight",
+      "payer_code"
+    ],
+    "exclusion_reason": "Removed discharge dispositions 11, 13, 14, 19, 20, and 21 (expired or hospice) and 12 (still a patient), plus the three encounters with unknown gender. Weight and payer code are dropped because they are missing on most rows. Race and gender are retained for the fairness audit and are not model features."
+  },
+  "split": {
+    "fit": {
+      "encounters": 59639,
+      "patients": 41991,
+      "readmissions_30d": 6800,
+      "prevalence": 0.11401934975435538
+    },
+    "calib": {
+      "encounters": 19804,
+      "patients": 13997,
+      "readmissions_30d": 2285,
+      "prevalence": 0.11538073116542112
+    },
+    "dev": {
+      "encounters": 79443,
+      "patients": 55988,
+      "readmissions_30d": 9085,
+      "prevalence": 0.11435872260614528
+    },
+    "test": {
+      "encounters": 19894,
+      "patients": 13997,
+      "readmissions_30d": 2227,
+      "prevalence": 0.1119432994872826
+    }
+  },
+  "validation": {
+    "protocol": "Patients are split 60% fit / 20% calibration / 20% test, stratified on whether the patient has any 30-day readmission. Five-fold GroupKFold AUC is computed on the development patients (fit + calibration), with encoders refit inside each fold. The test patients are scored once. Isotonic calibration is fit on the calibration patients. The outreach panel is the pre-specified top 10% by raw model score; a second capacity is chosen by maximizing net savings on the calibration set and then scored on the test set.",
+    "logistic_regression": {
+      "fold_auc": [
+        0.6627332018948183,
+        0.6623667544092775,
+        0.6633866310853058,
+        0.6617497397617572,
+        0.6657768071068249
+      ],
+      "mean": 0.6632026268515967,
+      "std": 0.0015564530967978637,
+      "oof_auc": 0.6631748975046918
+    },
+    "gradient_boosting": {
+      "fold_auc": [
+        0.6692589876746124,
+        0.6717150753575363,
+        0.671242243628317,
+        0.671624672806789,
+        0.6763829131861032
+      ],
+      "mean": 0.6720447785306716,
+      "std": 0.0026224653598032237,
+      "oof_auc": 0.6719679789077146
+    }
+  },
+  "test": {
+    "prior_inpatient_auc": 0.6003799929997677,
+    "logistic_regression": {
+      "roc_auc": 0.6522467779348269,
+      "pr_auc": 0.20104022948339312,
+      "brier_raw": 0.22838616860316685,
+      "prevalence": 0.1119432994872826,
+      "roc_auc_calibrated": 0.6506881829131047,
+      "brier_calibrated": 0.09606896421772977,
+      "brier_prevalence": 0.09941199718718316,
+      "brier_skill": 0.03362806365471949,
+      "ece_calibrated": 0.008772244338624747,
+      "auc_boot_mean": 0.6520682625024723,
+      "auc_ci95_low": 0.6389902150596013,
+      "auc_ci95_high": 0.6644588497256582,
+      "n_bootstrap": 400
+    },
+    "gradient_boosting": {
+      "roc_auc": 0.664468794028651,
+      "pr_auc": 0.21820117508351125,
+      "brier_raw": 0.2086865131757191,
+      "prevalence": 0.1119432994872826,
+      "roc_auc_calibrated": 0.6641132034795593,
+      "brier_calibrated": 0.09530787538825135,
+      "brier_prevalence": 0.09941199718718316,
+      "brier_skill": 0.04128396888761976,
+      "ece_calibrated": 0.005894039092211921,
+      "auc_boot_mean": 0.6642715117193297,
+      "auc_ci95_low": 0.651091956390464,
+      "auc_ci95_high": 0.678180159420369,
+      "n_bootstrap": 400
+    }
+  },
+  "assumptions": {
+    "readmission_cost_usd": 16000,
+    "intervention_cost_usd": 500,
+    "relative_risk_reduction": 0.2,
+    "primary_target_fraction": 0.1,
+    "break_even_precision": 0.15625,
+    "test_encounters": 19894,
+    "test_readmissions": 2227
+  },
+  "calibration_chosen_fraction": 0.15,
+  "calibration_chosen_test": {
+    "n": 19894,
+    "n_targeted": 2984,
+    "fraction_targeted": 0.14999497335880166,
+    "observed_readmissions": 682.0,
+    "precision": 0.22855227882037535,
+    "recall": 0.3062415806017063,
+    "readmissions_prevented": 136.4,
+    "gross_savings_usd": 2182400.0,
+    "program_cost_usd": 1492000.0,
+    "net_savings_usd": 690400.0,
+    "net_savings_per_1000_discharges_usd": 34703.930833417115,
+    "break_even_intervention_cost_usd": 731.3672922252011
+  },
+  "deciles_gradient_boosting": [
+    {
+      "risk_decile": 1,
+      "n": 1990,
+      "readmissions": 497,
+      "readmission_rate": 0.24974874371859296,
+      "lift": 2.231028966114813,
+      "share_of_readmissions": 0.22317018410417602,
+      "mean_score": 0.7102435444036268
+    },
+    {
+      "risk_decile": 2,
+      "n": 1989,
+      "readmissions": 342,
+      "readmission_rate": 0.17194570135746606,
+      "lift": 1.5360070870253388,
+      "share_of_readmissions": 0.1535698248765155,
+      "mean_score": 0.6044859859777301
+    },
+    {
+      "risk_decile": 3,
+      "n": 1989,
+      "readmissions": 272,
+      "readmission_rate": 0.13675213675213677,
+      "lift": 1.2216196715523164,
+      "share_of_readmissions": 0.12213740458015267,
+      "mean_score": 0.5432164757228188
+    },
+    {
+      "risk_decile": 4,
+      "n": 1990,
+      "readmissions": 241,
+      "readmission_rate": 0.12110552763819095,
+      "lift": 1.0818470439309253,
+      "share_of_readmissions": 0.10821733273462057,
+      "mean_score": 0.49531444174044853
+    },
+    {
+      "risk_decile": 5,
+      "n": 1989,
+      "readmissions": 214,
+      "readmission_rate": 0.10759175465057819,
+      "lift": 0.9611272415889548,
+      "share_of_readmissions": 0.09609339919173776,
+      "mean_score": 0.4511188207606553
+    },
+    {
+      "risk_decile": 6,
+      "n": 1989,
+      "readmissions": 178,
+      "readmission_rate": 0.08949220713926596,
+      "lift": 0.7994422850599717,
+      "share_of_readmissions": 0.07992815446789403,
+      "mean_score": 0.4074767511136782
+    },
+    {
+      "risk_decile": 7,
+      "n": 1990,
+      "readmissions": 154,
+      "readmission_rate": 0.07738693467336684,
+      "lift": 0.6913047500637449,
+      "share_of_readmissions": 0.0691513246519982,
+      "mean_score": 0.3647520350852788
+    },
+    {
+      "risk_decile": 8,
+      "n": 1989,
+      "readmissions": 142,
+      "readmission_rate": 0.07139265962795374,
+      "lift": 0.6377573285309887,
+      "share_of_readmissions": 0.06376290974405029,
+      "mean_score": 0.319191684418289
+    },
+    {
+      "risk_decile": 9,
+      "n": 1989,
+      "readmissions": 117,
+      "readmission_rate": 0.058823529411764705,
+      "lift": 0.5254761087191949,
+      "share_of_readmissions": 0.052537045352492144,
+      "mean_score": 0.2665054979791594
+    },
+    {
+      "risk_decile": 10,
+      "n": 1990,
+      "readmissions": 70,
+      "readmission_rate": 0.035175879396984924,
+      "lift": 0.31422943184715674,
+      "share_of_readmissions": 0.03143242029636282,
+      "mean_score": 0.18226623118418825
+    }
+  ],
+  "scenarios": [
+    {
+      "policy": "random",
+      "target_fraction": 0.05,
+      "n": 19894,
+      "n_targeted": 995,
+      "fraction_targeted": 0.05001507992359505,
+      "observed_readmissions": 111.38358298984619,
+      "precision": 0.1119432994872826,
+      "recall": 0.05001507992359506,
+      "readmissions_prevented": 22.27671659796924,
+      "gross_savings_usd": 356427.46556750784,
+      "program_cost_usd": 497500.0,
+      "net_savings_usd": -141072.53443249216,
+      "net_savings_per_1000_discharges_usd": -7091.21013534192,
+      "break_even_intervention_cost_usd": 358.2185583593043
+    },
+    {
+      "policy": "gradient_boosting",
+      "target_fraction": 0.05,
+      "n": 19894,
+      "n_targeted": 995,
+      "fraction_targeted": 0.05001507992359505,
+      "observed_readmissions": 300.0,
+      "precision": 0.3015075376884422,
+      "recall": 0.1347103726986978,
+      "readmissions_prevented": 60.0,
+      "gross_savings_usd": 960000.0,
+      "program_cost_usd": 497500.0,
+      "net_savings_usd": 462500.0,
+      "net_savings_per_1000_discharges_usd": 23248.215542374586,
+      "break_even_intervention_cost_usd": 964.824120603015
+    },
+    {
+      "policy": "logistic_regression",
+      "target_fraction": 0.05,
+      "n": 19894,
+      "n_targeted": 995,
+      "fraction_targeted": 0.05001507992359505,
+      "observed_readmissions": 273.0,
+      "precision": 0.2743718592964824,
+      "recall": 0.12258643915581499,
+      "readmissions_prevented": 54.6,
+      "gross_savings_usd": 873600.0,
+      "program_cost_usd": 497500.0,
+      "net_savings_usd": 376100.0,
+      "net_savings_per_1000_discharges_usd": 18905.197546999094,
+      "break_even_intervention_cost_usd": 877.9899497487437
+    },
+    {
+      "policy": "prior_inpatient",
+      "target_fraction": 0.05,
+      "n": 19894,
+      "n_targeted": 995,
+      "fraction_targeted": 0.05001507992359505,
+      "observed_readmissions": 262.0,
+      "precision": 0.2633165829145729,
+      "recall": 0.11764705882352941,
+      "readmissions_prevented": 52.400000000000006,
+      "gross_savings_usd": 838400.0000000001,
+      "program_cost_usd": 497500.0,
+      "net_savings_usd": 340900.0000000001,
+      "net_savings_per_1000_discharges_usd": 17135.81984517946,
+      "break_even_intervention_cost_usd": 842.6130653266333
+    },
+    {
+      "policy": "random",
+      "target_fraction": 0.1,
+      "n": 19894,
+      "n_targeted": 1989,
+      "fraction_targeted": 0.0999798934352066,
+      "observed_readmissions": 222.6552226802051,
+      "precision": 0.1119432994872826,
+      "recall": 0.09997989343520661,
+      "readmissions_prevented": 44.53104453604102,
+      "gross_savings_usd": 712496.7125766564,
+      "program_cost_usd": 994500.0,
+      "net_savings_usd": -282003.28742334363,
+      "net_savings_per_1000_discharges_usd": -14175.293426326713,
+      "break_even_intervention_cost_usd": 358.2185583593043
+    },
+    {
+      "policy": "gradient_boosting",
+      "target_fraction": 0.1,
+      "n": 19894,
+      "n_targeted": 1989,
+      "fraction_targeted": 0.0999798934352066,
+      "observed_readmissions": 497.0,
+      "precision": 0.2498743086978381,
+      "recall": 0.22317018410417602,
+      "readmissions_prevented": 99.4,
+      "gross_savings_usd": 1590400.0,
+      "program_cost_usd": 994500.0,
+      "net_savings_usd": 595900.0,
+      "net_savings_per_1000_discharges_usd": 29953.75490097517,
+      "break_even_intervention_cost_usd": 799.597787833082
+    },
+    {
+      "policy": "logistic_regression",
+      "target_fraction": 0.1,
+      "n": 19894,
+      "n_targeted": 1989,
+      "fraction_targeted": 0.0999798934352066,
+      "observed_readmissions": 471.0,
+      "precision": 0.2368024132730015,
+      "recall": 0.21149528513695554,
+      "readmissions_prevented": 94.2,
+      "gross_savings_usd": 1507200.0,
+      "program_cost_usd": 994500.0,
+      "net_savings_usd": 512700.0,
+      "net_savings_per_1000_discharges_usd": 25771.589423946916,
+      "break_even_intervention_cost_usd": 757.7677224736047
+    },
+    {
+      "policy": "prior_inpatient",
+      "target_fraction": 0.1,
+      "n": 19894,
+      "n_targeted": 1989,
+      "fraction_targeted": 0.0999798934352066,
+      "observed_readmissions": 443.0,
+      "precision": 0.2227249874308698,
+      "recall": 0.19892231701841043,
+      "readmissions_prevented": 88.60000000000001,
+      "gross_savings_usd": 1417600.0000000002,
+      "program_cost_usd": 994500.0,
+      "net_savings_usd": 423100.00000000023,
+      "net_savings_per_1000_discharges_usd": 21267.7189102242,
+      "break_even_intervention_cost_usd": 712.7199597787834
+    },
+    {
+      "policy": "random",
+      "target_fraction": 0.15,
+      "n": 19894,
+      "n_targeted": 2984,
+      "fraction_targeted": 0.14999497335880166,
+      "observed_readmissions": 334.03880567005126,
+      "precision": 0.1119432994872826,
+      "recall": 0.14999497335880163,
+      "readmissions_prevented": 66.80776113401025,
+      "gross_savings_usd": 1068924.178144164,
+      "program_cost_usd": 1492000.0,
+      "net_savings_usd": -423075.8218558361,
+      "net_savings_per_1000_discharges_usd": -21266.50356166865,
+      "break_even_intervention_cost_usd": 358.2185583593043
+    },
+    {
+      "policy": "gradient_boosting",
+      "target_fraction": 0.15,
+      "n": 19894,
+      "n_targeted": 2984,
+      "fraction_targeted": 0.14999497335880166,
+      "observed_readmissions": 682.0,
+      "precision": 0.22855227882037535,
+      "recall": 0.3062415806017063,
+      "readmissions_prevented": 136.4,
+      "gross_savings_usd": 2182400.0,
+      "program_cost_usd": 1492000.0,
+      "net_savings_usd": 690400.0,
+      "net_savings_per_1000_discharges_usd": 34703.930833417115,
+      "break_even_intervention_cost_usd": 731.3672922252011
+    },
+    {
+      "policy": "logistic_regression",
+      "target_fraction": 0.15,
+      "n": 19894,
+      "n_targeted": 2984,
+      "fraction_targeted": 0.14999497335880166,
+      "observed_readmissions": 635.0,
+      "precision": 0.21280160857908847,
+      "recall": 0.285136955545577,
+      "readmissions_prevented": 127.0,
+      "gross_savings_usd": 2032000.0,
+      "program_cost_usd": 1492000.0,
+      "net_savings_usd": 540000.0,
+      "net_savings_per_1000_discharges_usd": 27143.862471096814,
+      "break_even_intervention_cost_usd": 680.9651474530831
+    },
+    {
+      "policy": "prior_inpatient",
+      "target_fraction": 0.15,
+      "n": 19894,
+      "n_targeted": 2984,
+      "fraction_targeted": 0.14999497335880166,
+      "observed_readmissions": 614.0,
+      "precision": 0.20576407506702413,
+      "recall": 0.27570722945666815,
+      "readmissions_prevented": 122.80000000000001,
+      "gross_savings_usd": 1964800.0000000002,
+      "program_cost_usd": 1492000.0,
+      "net_savings_usd": 472800.00000000023,
+      "net_savings_per_1000_discharges_usd": 23765.959585804776,
+      "break_even_intervention_cost_usd": 658.4450402144772
+    },
+    {
+      "policy": "random",
+      "target_fraction": 0.2,
+      "n": 19894,
+      "n_targeted": 3979,
+      "fraction_targeted": 0.2000100532823967,
+      "observed_readmissions": 445.4223886598975,
+      "precision": 0.1119432994872826,
+      "recall": 0.2000100532823967,
+      "readmissions_prevented": 89.0844777319795,
+      "gross_savings_usd": 1425351.6437116722,
+      "program_cost_usd": 1989500.0,
+      "net_savings_usd": -564148.3562883278,
+      "net_savings_per_1000_discharges_usd": -28357.71369701055,
+      "break_even_intervention_cost_usd": 358.2185583593043
+    },
+    {
+      "policy": "gradient_boosting",
+      "target_fraction": 0.2,
+      "n": 19894,
+      "n_targeted": 3979,
+      "fraction_targeted": 0.2000100532823967,
+      "observed_readmissions": 839.0,
+      "precision": 0.21085699924604173,
+      "recall": 0.3767400089806915,
+      "readmissions_prevented": 167.8,
+      "gross_savings_usd": 2684800.0,
+      "program_cost_usd": 1989500.0,
+      "net_savings_usd": 695300.0,
+      "net_savings_per_1000_discharges_usd": 34950.23625213632,
+      "break_even_intervention_cost_usd": 674.7423975873336
+    },
+    {
+      "policy": "logistic_regression",
+      "target_fraction": 0.2,
+      "n": 19894,
+      "n_targeted": 3979,
+      "fraction_targeted": 0.2000100532823967,
+      "observed_readmissions": 780.0,
+      "precision": 0.19602915305353102,
+      "recall": 0.3502469690166143,
+      "readmissions_prevented": 156.0,
+      "gross_savings_usd": 2496000.0,
+      "program_cost_usd": 1989500.0,
+      "net_savings_usd": 506500.0,
+      "net_savings_per_1000_discharges_usd": 25459.937669649138,
+      "break_even_intervention_cost_usd": 627.2932897712993
+    },
+    {
+      "policy": "prior_inpatient",
+      "target_fraction": 0.2,
+      "n": 19894,
+      "n_targeted": 3979,
+      "fraction_targeted": 0.2000100532823967,
+      "observed_readmissions": 753.0,
+      "precision": 0.18924352852475496,
+      "recall": 0.33812303547373146,
+      "readmissions_prevented": 150.6,
+      "gross_savings_usd": 2409600.0,
+      "program_cost_usd": 1989500.0,
+      "net_savings_usd": 420100.0,
+      "net_savings_per_1000_discharges_usd": 21116.91967427365,
+      "break_even_intervention_cost_usd": 605.5792912792159
+    },
+    {
+      "policy": "random",
+      "target_fraction": 0.25,
+      "n": 19894,
+      "n_targeted": 4974,
+      "fraction_targeted": 0.25002513320599173,
+      "observed_readmissions": 556.8059716497437,
+      "precision": 0.11194329948728261,
+      "recall": 0.2500251332059918,
+      "readmissions_prevented": 111.36119432994875,
+      "gross_savings_usd": 1781779.10927918,
+      "program_cost_usd": 2487000.0,
+      "net_savings_usd": -705220.89072082,
+      "net_savings_per_1000_discharges_usd": -35448.92383235247,
+      "break_even_intervention_cost_usd": 358.2185583593044
+    },
+    {
+      "policy": "gradient_boosting",
+      "target_fraction": 0.25,
+      "n": 19894,
+      "n_targeted": 4974,
+      "fraction_targeted": 0.25002513320599173,
+      "observed_readmissions": 991.0,
+      "precision": 0.19923602734217932,
+      "recall": 0.44499326448136506,
+      "readmissions_prevented": 198.20000000000002,
+      "gross_savings_usd": 3171200.0000000005,
+      "program_cost_usd": 2487000.0,
+      "net_savings_usd": 684200.0000000005,
+      "net_savings_per_1000_discharges_usd": 34392.279079119355,
+      "break_even_intervention_cost_usd": 637.5552874949739
+    },
+    {
+      "policy": "logistic_regression",
+      "target_fraction": 0.25,
+      "n": 19894,
+      "n_targeted": 4974,
+      "fraction_targeted": 0.25002513320599173,
+      "observed_readmissions": 945.0,
+      "precision": 0.18998793727382388,
+      "recall": 0.42433767400089806,
+      "readmissions_prevented": 189.0,
+      "gross_savings_usd": 3024000.0,
+      "program_cost_usd": 2487000.0,
+      "net_savings_usd": 537000.0,
+      "net_savings_per_1000_discharges_usd": 26993.063235146277,
+      "break_even_intervention_cost_usd": 607.9613992762365
+    },
+    {
+      "policy": "prior_inpatient",
+      "target_fraction": 0.25,
+      "n": 19894,
+      "n_targeted": 4974,
+      "fraction_targeted": 0.25002513320599173,
+      "observed_readmissions": 875.0,
+      "precision": 0.1759147567350221,
+      "recall": 0.3929052537045353,
+      "readmissions_prevented": 175.0,
+      "gross_savings_usd": 2800000.0,
+      "program_cost_usd": 2487000.0,
+      "net_savings_usd": 313000.0,
+      "net_savings_per_1000_discharges_usd": 15733.38695083945,
+      "break_even_intervention_cost_usd": 562.9272215520707
+    },
+    {
+      "policy": "random",
+      "target_fraction": 0.3,
+      "n": 19894,
+      "n_targeted": 5968,
+      "fraction_targeted": 0.2999899467176033,
+      "observed_readmissions": 668.0776113401025,
+      "precision": 0.1119432994872826,
+      "recall": 0.29998994671760326,
+      "readmissions_prevented": 133.6155222680205,
+      "gross_savings_usd": 2137848.356288328,
+      "program_cost_usd": 2984000.0,
+      "net_savings_usd": -846151.6437116722,
+      "net_savings_per_1000_discharges_usd": -42533.0071233373,
+      "break_even_intervention_cost_usd": 358.2185583593043
+    },
+    {
+      "policy": "gradient_boosting",
+      "target_fraction": 0.3,
+      "n": 19894,
+      "n_targeted": 5968,
+      "fraction_targeted": 0.2999899467176033,
+      "observed_readmissions": 1111.0,
+      "precision": 0.18615951742627346,
+      "recall": 0.4988774135608442,
+      "readmissions_prevented": 222.20000000000002,
+      "gross_savings_usd": 3555200.0000000005,
+      "program_cost_usd": 2984000.0,
+      "net_savings_usd": 571200.0000000005,
+      "net_savings_per_1000_discharges_usd": 28712.17452498243,
+      "break_even_intervention_cost_usd": 595.7104557640752
+    },
+    {
+      "policy": "logistic_regression",
+      "target_fraction": 0.3,
+      "n": 19894,
+      "n_targeted": 5968,
+      "fraction_targeted": 0.2999899467176033,
+      "observed_readmissions": 1066.0,
+      "precision": 0.17861930294906167,
+      "recall": 0.4786708576560395,
+      "readmissions_prevented": 213.20000000000002,
+      "gross_savings_usd": 3411200.0000000005,
+      "program_cost_usd": 2984000.0,
+      "net_savings_usd": 427200.00000000047,
+      "net_savings_per_1000_discharges_usd": 21473.811199356613,
+      "break_even_intervention_cost_usd": 571.5817694369973
+    },
+    {
+      "policy": "prior_inpatient",
+      "target_fraction": 0.3,
+      "n": 19894,
+      "n_targeted": 5968,
+      "fraction_targeted": 0.2999899467176033,
+      "observed_readmissions": 1006.0,
+      "precision": 0.1685656836461126,
+      "recall": 0.45172878311629994,
+      "readmissions_prevented": 201.20000000000002,
+      "gross_savings_usd": 3219200.0000000005,
+      "program_cost_usd": 2984000.0,
+      "net_savings_usd": 235200.00000000047,
+      "net_savings_per_1000_discharges_usd": 11822.66009852219,
+      "break_even_intervention_cost_usd": 539.4101876675603
+    },
+    {
+      "policy": "random",
+      "target_fraction": 0.4,
+      "n": 19894,
+      "n_targeted": 7958,
+      "fraction_targeted": 0.4000201065647934,
+      "observed_readmissions": 890.844777319795,
+      "precision": 0.1119432994872826,
+      "recall": 0.4000201065647934,
+      "readmissions_prevented": 178.168955463959,
+      "gross_savings_usd": 2850703.2874233443,
+      "program_cost_usd": 3979000.0,
+      "net_savings_usd": -1128296.7125766557,
+      "net_savings_per_1000_discharges_usd": -56715.4273940211,
+      "break_even_intervention_cost_usd": 358.2185583593043
+    },
+    {
+      "policy": "gradient_boosting",
+      "target_fraction": 0.4,
+      "n": 19894,
+      "n_targeted": 7958,
+      "fraction_targeted": 0.4000201065647934,
+      "observed_readmissions": 1352.0,
+      "precision": 0.16989193264639357,
+      "recall": 0.6070947462954648,
+      "readmissions_prevented": 270.40000000000003,
+      "gross_savings_usd": 4326400.000000001,
+      "program_cost_usd": 3979000.0,
+      "net_savings_usd": 347400.00000000093,
+      "net_savings_per_1000_discharges_usd": 17462.551523072332,
+      "break_even_intervention_cost_usd": 543.6541844684594
+    },
+    {
+      "policy": "logistic_regression",
+      "target_fraction": 0.4,
+      "n": 19894,
+      "n_targeted": 7958,
+      "fraction_targeted": 0.4000201065647934,
+      "observed_readmissions": 1325.0,
+      "precision": 0.16649912038200554,
+      "recall": 0.5949708127525819,
+      "readmissions_prevented": 265.0,
+      "gross_savings_usd": 4240000.0,
+      "program_cost_usd": 3979000.0,
+      "net_savings_usd": 261000.0,
+      "net_savings_per_1000_discharges_usd": 13119.533527696793,
+      "break_even_intervention_cost_usd": 532.7971852224177
+    },
+    {
+      "policy": "prior_inpatient",
+      "target_fraction": 0.4,
+      "n": 19894,
+      "n_targeted": 7958,
+      "fraction_targeted": 0.4000201065647934,
+      "observed_readmissions": 1195.0,
+      "precision": 0.1501633576275446,
+      "recall": 0.5365963179164795,
+      "readmissions_prevented": 239.0,
+      "gross_savings_usd": 3824000.0,
+      "program_cost_usd": 3979000.0,
+      "net_savings_usd": -155000.0,
+      "net_savings_per_1000_discharges_usd": -7791.293857444455,
+      "break_even_intervention_cost_usd": 480.5227444081427
+    },
+    {
+      "policy": "random",
+      "target_fraction": 0.5,
+      "n": 19894,
+      "n_targeted": 9947,
+      "fraction_targeted": 0.5,
+      "observed_readmissions": 1113.5,
+      "precision": 0.1119432994872826,
+      "recall": 0.5,
+      "readmissions_prevented": 222.70000000000002,
+      "gross_savings_usd": 3563200.0000000005,
+      "program_cost_usd": 4973500.0,
+      "net_savings_usd": -1410299.9999999995,
+      "net_savings_per_1000_discharges_usd": -70890.72082034782,
+      "break_even_intervention_cost_usd": 358.2185583593043
+    },
+    {
+      "policy": "gradient_boosting",
+      "target_fraction": 0.5,
+      "n": 19894,
+      "n_targeted": 9947,
+      "fraction_targeted": 0.5,
+      "observed_readmissions": 1566.0,
+      "precision": 0.15743440233236153,
+      "recall": 0.7031881454872025,
+      "readmissions_prevented": 313.20000000000005,
+      "gross_savings_usd": 5011200.000000001,
+      "program_cost_usd": 4973500.0,
+      "net_savings_usd": 37700.00000000093,
+      "net_savings_per_1000_discharges_usd": 1895.0437317784724,
+      "break_even_intervention_cost_usd": 503.7900874635569
+    },
+    {
+      "policy": "logistic_regression",
+      "target_fraction": 0.5,
+      "n": 19894,
+      "n_targeted": 9947,
+      "fraction_targeted": 0.5,
+      "observed_readmissions": 1531.0,
+      "precision": 0.15391575349351563,
+      "recall": 0.6874719353390211,
+      "readmissions_prevented": 306.2,
+      "gross_savings_usd": 4899200.0,
+      "program_cost_usd": 4973500.0,
+      "net_savings_usd": -74300.0,
+      "net_savings_per_1000_discharges_usd": -3734.7944103749874,
+      "break_even_intervention_cost_usd": 492.53041117925005
+    },
+    {
+      "policy": "prior_inpatient",
+      "target_fraction": 0.5,
+      "n": 19894,
+      "n_targeted": 9947,
+      "fraction_targeted": 0.5,
+      "observed_readmissions": 1389.0,
+      "precision": 0.13964009249019804,
+      "recall": 0.6237090255949708,
+      "readmissions_prevented": 277.8,
+      "gross_savings_usd": 4444800.0,
+      "program_cost_usd": 4973500.0,
+      "net_savings_usd": -528700.0,
+      "net_savings_per_1000_discharges_usd": -26575.852015683122,
+      "break_even_intervention_cost_usd": 446.84829596863375
+    }
+  ],
+  "shap_top": [
+    {
+      "feature": "number_inpatient",
+      "mean_abs_shap": 0.31822050545748676,
+      "direction": 1
+    },
+    {
+      "feature": "discharge_group_Home",
+      "mean_abs_shap": 0.16022226256248273,
+      "direction": -1
+    },
+    {
+      "feature": "number_diagnoses",
+      "mean_abs_shap": 0.07607036686426775,
+      "direction": 1
+    },
+    {
+      "feature": "age_mid",
+      "mean_abs_shap": 0.07049451033873354,
+      "direction": 1
+    },
+    {
+      "feature": "time_in_hospital",
+      "mean_abs_shap": 0.06785632248603984,
+      "direction": 1
+    },
+    {
+      "feature": "discharge_group_Transfer",
+      "mean_abs_shap": 0.0639862753827157,
+      "direction": 1
+    },
+    {
+      "feature": "num_lab_procedures",
+      "mean_abs_shap": 0.0606238704022102,
+      "direction": 1
+    },
+    {
+      "feature": "n_diabetes_meds",
+      "mean_abs_shap": 0.055339510826048884,
+      "direction": -1
+    },
+    {
+      "feature": "num_medications",
+      "mean_abs_shap": 0.051353023502169644,
+      "direction": 1
+    },
+    {
+      "feature": "diag_1_group_Circulatory",
+      "mean_abs_shap": 0.04627380356411439,
+      "direction": 1
+    },
+    {
+      "feature": "number_emergency",
+      "mean_abs_shap": 0.04484588116016174,
+      "direction": 1
+    },
+    {
+      "feature": "diag_1_group_Respiratory",
+      "mean_abs_shap": 0.03513285705254536,
+      "direction": -1
+    },
+    {
+      "feature": "discharge_group_Nursing facility",
+      "mean_abs_shap": 0.034188509486765016,
+      "direction": 1
+    },
+    {
+      "feature": "insulin_No",
+      "mean_abs_shap": 0.03186222127364935,
+      "direction": -1
+    },
+    {
+      "feature": "diag_2_group_Respiratory",
+      "mean_abs_shap": 0.02804585183690962,
+      "direction": -1
+    }
+  ],
+  "fairness": {
+    "gaps": {
+      "race": {
+        "group_type": "race",
+        "gap": 0.0997834511055391,
+        "highest_group": "Hispanic",
+        "highest_recall": 0.3170731707317073,
+        "lowest_group": "Caucasian",
+        "lowest_recall": 0.21728971962616822,
+        "groups_compared": 4
+      },
+      "gender": {
+        "group_type": "gender",
+        "gap": 0.002049622437971965,
+        "highest_group": "Male",
+        "highest_recall": 0.22427184466019418,
+        "lowest_group": "Female",
+        "lowest_recall": 0.2222222222222222,
+        "groups_compared": 2
+      },
+      "age": {
+        "group_type": "age",
+        "gap": 0.23545043457834156,
+        "highest_group": "Under 40",
+        "highest_recall": 0.4236111111111111,
+        "lowest_group": "80 and older",
+        "lowest_recall": 0.18816067653276955,
+        "groups_compared": 6
+      }
+    },
+    "groups": [
+      {
+        "group_type": "age",
+        "group": "70\u201379",
+        "n": 4956,
+        "readmissions": 593,
+        "prevalence": 0.11965294592413236,
+        "mean_predicted_risk": 0.11999743487901002,
+        "selection_rate": 0.10290556900726393,
+        "recall": 0.18887015177065766,
+        "precision": 0.2196078431372549,
+        "small_sample": false
+      },
+      {
+        "group_type": "age",
+        "group": "60\u201369",
+        "n": 4480,
+        "readmissions": 503,
+        "prevalence": 0.11227678571428572,
+        "mean_predicted_risk": 0.11540354209529709,
+        "selection_rate": 0.103125,
+        "recall": 0.2345924453280318,
+        "precision": 0.2554112554112554,
+        "small_sample": false
+      },
+      {
+        "group_type": "age",
+        "group": "80 and older",
+        "n": 3901,
+        "readmissions": 473,
+        "prevalence": 0.12125096129197642,
+        "mean_predicted_risk": 0.12644358062905448,
+        "selection_rate": 0.09407844142527556,
+        "recall": 0.18816067653276955,
+        "precision": 0.24250681198910082,
+        "small_sample": false
+      },
+      {
+        "group_type": "age",
+        "group": "50\u201359",
+        "n": 3390,
+        "readmissions": 322,
+        "prevalence": 0.09498525073746313,
+        "mean_predicted_risk": 0.10082975894235263,
+        "selection_rate": 0.07817109144542773,
+        "recall": 0.2204968944099379,
+        "precision": 0.2679245283018868,
+        "small_sample": false
+      },
+      {
+        "group_type": "age",
+        "group": "40\u201349",
+        "n": 1882,
+        "readmissions": 192,
+        "prevalence": 0.10201912858660998,
+        "mean_predicted_risk": 0.106944060424179,
+        "selection_rate": 0.10414452709883103,
+        "recall": 0.23958333333333334,
+        "precision": 0.23469387755102042,
+        "small_sample": false
+      },
+      {
+        "group_type": "age",
+        "group": "Under 40",
+        "n": 1285,
+        "readmissions": 144,
+        "prevalence": 0.11206225680933853,
+        "mean_predicted_risk": 0.11394187386489124,
+        "selection_rate": 0.14708171206225681,
+        "recall": 0.4236111111111111,
+        "precision": 0.32275132275132273,
+        "small_sample": false
+      },
+      {
+        "group_type": "gender",
+        "group": "Female",
+        "n": 10946,
+        "readmissions": 1197,
+        "prevalence": 0.1093550155307875,
+        "mean_predicted_risk": 0.11641543068437833,
+        "selection_rate": 0.10186369450027408,
+        "recall": 0.2222222222222222,
+        "precision": 0.23856502242152466,
+        "small_sample": false
+      },
+      {
+        "group_type": "gender",
+        "group": "Male",
+        "n": 8948,
+        "readmissions": 1030,
+        "prevalence": 0.11510952168082253,
+        "mean_predicted_risk": 0.1140126477491402,
+        "selection_rate": 0.09767545820295039,
+        "recall": 0.22427184466019418,
+        "precision": 0.2643020594965675,
+        "small_sample": false
+      },
+      {
+        "group_type": "race",
+        "group": "Caucasian",
+        "n": 14910,
+        "readmissions": 1712,
+        "prevalence": 0.11482226693494299,
+        "mean_predicted_risk": 0.11576659552927351,
+        "selection_rate": 0.09738430583501007,
+        "recall": 0.21728971962616822,
+        "precision": 0.256198347107438,
+        "small_sample": false
+      },
+      {
+        "group_type": "race",
+        "group": "African American",
+        "n": 3688,
+        "readmissions": 401,
+        "prevalence": 0.10873101952277657,
+        "mean_predicted_risk": 0.11790561009047566,
+        "selection_rate": 0.11442516268980477,
+        "recall": 0.24688279301745636,
+        "precision": 0.23459715639810427,
+        "small_sample": false
+      },
+      {
+        "group_type": "race",
+        "group": "Missing",
+        "n": 457,
+        "readmissions": 37,
+        "prevalence": 0.08096280087527352,
+        "mean_predicted_risk": 0.0979061670251505,
+        "selection_rate": 0.06783369803063458,
+        "recall": 0.21621621621621623,
+        "precision": 0.25806451612903225,
+        "small_sample": false
+      },
+      {
+        "group_type": "race",
+        "group": "Hispanic",
+        "n": 452,
+        "readmissions": 41,
+        "prevalence": 0.09070796460176991,
+        "mean_predicted_risk": 0.108678828588493,
+        "selection_rate": 0.1172566371681416,
+        "recall": 0.3170731707317073,
+        "precision": 0.24528301886792453,
+        "small_sample": false
+      },
+      {
+        "group_type": "race",
+        "group": "Other",
+        "n": 280,
+        "readmissions": 23,
+        "prevalence": 0.08214285714285714,
+        "mean_predicted_risk": 0.10684285768771677,
+        "selection_rate": 0.1,
+        "recall": 0.21739130434782608,
+        "precision": 0.17857142857142858,
+        "small_sample": false
+      },
+      {
+        "group_type": "race",
+        "group": "Asian",
+        "n": 107,
+        "readmissions": 13,
+        "prevalence": 0.12149532710280374,
+        "mean_predicted_risk": 0.09131493430201747,
+        "selection_rate": 0.028037383177570093,
+        "recall": 0.0,
+        "precision": 0.0,
+        "small_sample": true
+      }
+    ]
+  },
+  "sql": {
+    "cohort_overview": [
+      {
+        "encounters": 99337,
+        "patients": 69985,
+        "readmissions_30d": 11312.0,
+        "readmission_rate": 0.1139,
+        "avg_length_of_stay_days": 4.38,
+        "avg_prior_inpatient_stays": 0.63
+      }
+    ],
+    "readmission_by_age": [
+      {
+        "age": "[0-10)",
+        "encounters": 160,
+        "readmissions_30d": 3.0,
+        "readmission_rate": 0.0187
+      },
+      {
+        "age": "[10-20)",
+        "encounters": 690,
+        "readmissions_30d": 40.0,
+        "readmission_rate": 0.058
+      },
+      {
+        "age": "[20-30)",
+        "encounters": 1649,
+        "readmissions_30d": 236.0,
+        "readmission_rate": 0.1431
+      },
+      {
+        "age": "[30-40)",
+        "encounters": 3764,
+        "readmissions_30d": 424.0,
+        "readmission_rate": 0.1126
+      },
+      {
+        "age": "[40-50)",
+        "encounters": 9607,
+        "readmissions_30d": 1024.0,
+        "readmission_rate": 0.1066
+      },
+      {
+        "age": "[50-60)",
+        "encounters": 17060,
+        "readmissions_30d": 1667.0,
+        "readmission_rate": 0.0977
+      },
+      {
+        "age": "[60-70)",
+        "encounters": 22058,
+        "readmissions_30d": 2493.0,
+        "readmission_rate": 0.113
+      },
+      {
+        "age": "[70-80)",
+        "encounters": 25327,
+        "readmissions_30d": 3052.0,
+        "readmission_rate": 0.1205
+      },
+      {
+        "age": "[80-90)",
+        "encounters": 16434,
+        "readmissions_30d": 2065.0,
+        "readmission_rate": 0.1257
+      },
+      {
+        "age": "[90-100)",
+        "encounters": 2588,
+        "readmissions_30d": 308.0,
+        "readmission_rate": 0.119
+      }
+    ],
+    "readmission_by_primary_diagnosis": [
+      {
+        "primary_diagnosis": "Missing",
+        "encounters": 20,
+        "readmissions_30d": 5.0,
+        "readmission_rate": 0.25
+      },
+      {
+        "primary_diagnosis": "Diabetes",
+        "encounters": 8661,
+        "readmissions_30d": 1135.0,
+        "readmission_rate": 0.131
+      },
+      {
+        "primary_diagnosis": "Injury",
+        "encounters": 6851,
+        "readmissions_30d": 850.0,
+        "readmission_rate": 0.1241
+      },
+      {
+        "primary_diagnosis": "Circulatory",
+        "encounters": 29679,
+        "readmissions_30d": 3469.0,
+        "readmission_rate": 0.1169
+      },
+      {
+        "primary_diagnosis": "Other",
+        "encounters": 17792,
+        "readmissions_30d": 2078.0,
+        "readmission_rate": 0.1168
+      },
+      {
+        "primary_diagnosis": "Genitourinary",
+        "encounters": 5002,
+        "readmissions_30d": 552.0,
+        "readmission_rate": 0.1104
+      },
+      {
+        "primary_diagnosis": "Neoplasms",
+        "encounters": 3131,
+        "readmissions_30d": 341.0,
+        "readmission_rate": 0.1089
+      },
+      {
+        "primary_diagnosis": "Digestive",
+        "encounters": 9333,
+        "readmissions_30d": 1010.0,
+        "readmission_rate": 0.1082
+      },
+      {
+        "primary_diagnosis": "Respiratory",
+        "encounters": 13933,
+        "readmissions_30d": 1401.0,
+        "readmission_rate": 0.1006
+      },
+      {
+        "primary_diagnosis": "Musculoskeletal",
+        "encounters": 4935,
+        "readmissions_30d": 471.0,
+        "readmission_rate": 0.0954
+      }
+    ],
+    "readmission_by_prior_inpatient": [
+      {
+        "prior_inpatient_stays": "0",
+        "encounters": 66240,
+        "readmissions_30d": 5689.0,
+        "readmission_rate": 0.0859
+      },
+      {
+        "prior_inpatient_stays": "1",
+        "encounters": 18983,
+        "readmissions_30d": 2515.0,
+        "readmission_rate": 0.1325
+      },
+      {
+        "prior_inpatient_stays": "2",
+        "encounters": 7300,
+        "readmissions_30d": 1309.0,
+        "readmission_rate": 0.1793
+      },
+      {
+        "prior_inpatient_stays": "3",
+        "encounters": 3271,
+        "readmissions_30d": 688.0,
+        "readmission_rate": 0.2103
+      },
+      {
+        "prior_inpatient_stays": "4+",
+        "encounters": 3543,
+        "readmissions_30d": 1111.0,
+        "readmission_rate": 0.3136
+      }
+    ],
+    "high_utilizer_gap": [
+      {
+        "utilizer": "No prior inpatient stay",
+        "encounters": 66240,
+        "readmissions_30d": 5689.0,
+        "readmission_rate": 0.0859
+      },
+      {
+        "utilizer": "One or more prior inpatient stays",
+        "encounters": 33097,
+        "readmissions_30d": 5623.0,
+        "readmission_rate": 0.1699
+      }
+    ],
+    "readmission_by_a1c": [
+      {
+        "a1c_result": "NotMeasured",
+        "encounters": 82503,
+        "readmissions_30d": 9639.0,
+        "readmission_rate": 0.1168
+      },
+      {
+        "a1c_result": "Above8",
+        "encounters": 8137,
+        "readmissions_30d": 809.0,
+        "readmission_rate": 0.0994
+      },
+      {
+        "a1c_result": "Normal",
+        "encounters": 4922,
+        "readmissions_30d": 481.0,
+        "readmission_rate": 0.0977
+      },
+      {
+        "a1c_result": "Above7",
+        "encounters": 3775,
+        "readmissions_30d": 383.0,
+        "readmission_rate": 0.1015
+      }
+    ],
+    "readmission_by_discharge": [
+      {
+        "discharge_group": "Home",
+        "encounters": 60232,
+        "readmissions_30d": 5602.0,
+        "readmission_rate": 0.093
+      },
+      {
+        "discharge_group": "Nursing facility",
+        "encounters": 15229,
+        "readmissions_30d": 2187.0,
+        "readmission_rate": 0.1436
+      },
+      {
+        "discharge_group": "Home health",
+        "encounters": 13010,
+        "readmissions_30d": 1653.0,
+        "readmission_rate": 0.1271
+      },
+      {
+        "discharge_group": "Transfer",
+        "encounters": 5563,
+        "readmissions_30d": 1229.0,
+        "readmission_rate": 0.2209
+      },
+      {
+        "discharge_group": "Unknown",
+        "encounters": 4680,
+        "readmissions_30d": 551.0,
+        "readmission_rate": 0.1177
+      },
+      {
+        "discharge_group": "Left against advice",
+        "encounters": 623,
+        "readmissions_30d": 90.0,
+        "readmission_rate": 0.1445
+      }
+    ],
+    "top_specialties": [
+      {
+        "medical_specialty": "Missing",
+        "encounters": 48614,
+        "readmissions_30d": 5753.0,
+        "readmission_rate": 0.1183
+      },
+      {
+        "medical_specialty": "InternalMedicine",
+        "encounters": 14235,
+        "readmissions_30d": 1641.0,
+        "readmission_rate": 0.1153
+      },
+      {
+        "medical_specialty": "Emergency/Trauma",
+        "encounters": 7419,
+        "readmissions_30d": 845.0,
+        "readmission_rate": 0.1139
+      },
+      {
+        "medical_specialty": "Family/GeneralPractice",
+        "encounters": 7252,
+        "readmissions_30d": 879.0,
+        "readmission_rate": 0.1212
+      },
+      {
+        "medical_specialty": "Cardiology",
+        "encounters": 5278,
+        "readmissions_30d": 424.0,
+        "readmission_rate": 0.0803
+      },
+      {
+        "medical_specialty": "Surgery-General",
+        "encounters": 3059,
+        "readmissions_30d": 342.0,
+        "readmission_rate": 0.1118
+      },
+      {
+        "medical_specialty": "Nephrology",
+        "encounters": 1539,
+        "readmissions_30d": 248.0,
+        "readmission_rate": 0.1611
+      },
+      {
+        "medical_specialty": "Orthopedics",
+        "encounters": 1392,
+        "readmissions_30d": 151.0,
+        "readmission_rate": 0.1085
+      },
+      {
+        "medical_specialty": "Orthopedics-Reconstructive",
+        "encounters": 1230,
+        "readmissions_30d": 92.0,
+        "readmission_rate": 0.0748
+      },
+      {
+        "medical_specialty": "Radiologist",
+        "encounters": 1121,
+        "readmissions_30d": 102.0,
+        "readmission_rate": 0.091
+      },
+      {
+        "medical_specialty": "Pulmonology",
+        "encounters": 854,
+        "readmissions_30d": 96.0,
+        "readmission_rate": 0.1124
+      },
+      {
+        "medical_specialty": "Psychiatry",
+        "encounters": 852,
+        "readmissions_30d": 103.0,
+        "readmission_rate": 0.1209
+      }
+    ]
+  },
+  "versions": {
+    "python": "3.12.3",
+    "pandas": "3.1.1",
+    "numpy": "2.5.5",
+    "scikit_learn": "1.9.1",
+    "lightgbm": "4.7.0",
+    "shap": "0.54.1",
+    "duckdb": "2.0.1"
+  },
+  "operating_point": {
+    "fraction": 0.1,
+    "policies": {
+      "random": {
+        "target_fraction": 0.1,
+        "n": 19894,
+        "n_targeted": 1989,
+        "fraction_targeted": 0.0999798934352066,
+        "observed_readmissions": 222.6552226802051,
+        "precision": 0.1119432994872826,
+        "recall": 0.09997989343520661,
+        "readmissions_prevented": 44.53104453604102,
+        "gross_savings_usd": 712496.7125766564,
+        "program_cost_usd": 994500.0,
+        "net_savings_usd": -282003.28742334363,
+        "net_savings_per_1000_discharges_usd": -14175.293426326713,
+        "break_even_intervention_cost_usd": 358.2185583593043
+      },
+      "gradient_boosting": {
+        "target_fraction": 0.1,
+        "n": 19894,
+        "n_targeted": 1989,
+        "fraction_targeted": 0.0999798934352066,
+        "observed_readmissions": 497.0,
+        "precision": 0.2498743086978381,
+        "recall": 0.22317018410417602,
+        "readmissions_prevented": 99.4,
+        "gross_savings_usd": 1590400.0,
+        "program_cost_usd": 994500.0,
+        "net_savings_usd": 595900.0,
+        "net_savings_per_1000_discharges_usd": 29953.75490097517,
+        "break_even_intervention_cost_usd": 799.597787833082
+      },
+      "logistic_regression": {
+        "target_fraction": 0.1,
+        "n": 19894,
+        "n_targeted": 1989,
+        "fraction_targeted": 0.0999798934352066,
+        "observed_readmissions": 471.0,
+        "precision": 0.2368024132730015,
+        "recall": 0.21149528513695554,
+        "readmissions_prevented": 94.2,
+        "gross_savings_usd": 1507200.0,
+        "program_cost_usd": 994500.0,
+        "net_savings_usd": 512700.0,
+        "net_savings_per_1000_discharges_usd": 25771.589423946916,
+        "break_even_intervention_cost_usd": 757.7677224736047
+      },
+      "prior_inpatient": {
+        "target_fraction": 0.1,
+        "n": 19894,
+        "n_targeted": 1989,
+        "fraction_targeted": 0.0999798934352066,
+        "observed_readmissions": 443.0,
+        "precision": 0.2227249874308698,
+        "recall": 0.19892231701841043,
+        "readmissions_prevented": 88.60000000000001,
+        "gross_savings_usd": 1417600.0000000002,
+        "program_cost_usd": 994500.0,
+        "net_savings_usd": 423100.00000000023,
+        "net_savings_per_1000_discharges_usd": 21267.7189102242,
+        "break_even_intervention_cost_usd": 712.7199597787834
+      }
+    }
+  }
+}
